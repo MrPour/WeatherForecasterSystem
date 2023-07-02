@@ -440,7 +440,7 @@ public:
   // pthread_spinlock_t spin;  // 初学暂时不要关心这行代码。
 
   // 构造函数。
-  // MaxLogSize：最大日志文件的大小，单位M，缺省100M，最小为10M。
+  // MaxLogSize：最大日志文件的大小，单位M，缺省100M，最小为10M。默认切换。
   CLogFile(const long MaxLogSize=100);  
 
   // 打开日志文件。

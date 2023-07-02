@@ -2,14 +2,15 @@
 // Created by chenhao on 2023/7/2.
 //
 #include "public.h"
-
+//日志文件声明为全局变量
+CLogFile logFile;
 int main(int argc,char *argv[])
 {
     //inifile outpath logfile
     if(argc!=4)
     {
         printf("Using: ./crtsurfdata inifile outpath logfile\n");
-        printf("Example:/project/idc/bin/crtsurfdata /project/idc/ini/stcode.ini /tmp/surfdata /log/idc\n");
+        printf("Example:/project/idc/bin/crtsurfdata /project/idc/ini/stcode.ini /tmp/surfdata /log/idc/crtsurfdata.log\n\n");
 
         printf("inifile 全国气象站点参数文件名。\n");
         printf("outpath 全国气象站点数据文件存放目录。\n");
@@ -17,5 +18,15 @@ int main(int argc,char *argv[])
 
         return -1;
     }
+
+    if(logFile.Open(argv[3]) == false)
+    {
+        printf("logFile.Open(%s) failed.\n",argv[3]);
+        return -1;
+    }
+
+    logFile.Write("crtsurfdata 开始运行。\n");
+    //业务代码
+    logFile.Write("crtsurfdata 开始结束。\n");
     return 0;
 }

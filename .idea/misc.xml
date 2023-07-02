@@ -4,6 +4,7 @@
   <component name="MakefileSettings">
     <option name="linkedExternalProjectsSettings">
       <MakefileProjectSettings>
+        <option name="buildDirectory" value="$PROJECT_DIR$/idc" />
         <option name="externalProjectPath" value="$PROJECT_DIR$/idc1/c" />
         <option name="modules">
           <set>
