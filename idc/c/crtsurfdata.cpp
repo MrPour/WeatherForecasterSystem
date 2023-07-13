@@ -68,6 +68,10 @@ int main(int argc,char *argv[])
     logFile.Write("crtsurfdata 开始运行。\n");
     if(LoadStationInfo(argv[1])== false) return -1;
     logFile.Write("crtsurfdata 开始结束。\n");
+
+    // 模拟生成全国气象站点分钟观测数据
+    MockSurfData();
+
     return 0;
 }
 
@@ -116,23 +120,25 @@ void MockSurfData()
 
     //使用当前时间作为观测时间
     char* strddatetime = new char[21];
+    //必须要初始化，否则数据会出现问题
+    memset(strddatetime,0,sizeof(strddatetime));
     LocalTime(strddatetime,"yyyymmddhh24miss");
 
-    auto stSurfdataInfo = make_shared<St_surfdataInfo>();
+    St_surfdataInfo stSurfdataInfo;
     for(int i = 0;i<v_stationInfo.size();++i)
     {
         //c风格字符串只能strncpy
-        strncpy(stSurfdataInfo->obtid,v_stationInfo[i].obtid,10);//站点代码
-        strncpy(stSurfdataInfo->ddatetime,strddatetime,14);  // 数据时间：格式yyyymmddhh24miss长度为14
-        stSurfdataInfo->t=rand()%351;       // 气温：单位，0.1摄氏度
-        stSurfdataInfo->p=rand()%265+10000; // 气压：0.1百帕
-        stSurfdataInfo->u=rand()%100+1;     // 相对湿度，0-100之间的值。
-        stSurfdataInfo->wd=rand()%360;      // 风向，0-360之间的值。
-        stSurfdataInfo->wf=rand()%150;      // 风速：单位0.1m/s
-        stSurfdataInfo->r=rand()%16;        // 降雨量：0.1mm
-        stSurfdataInfo->vis=rand()%5001+100000;  // 能见度：0.1米
+        strncpy(stSurfdataInfo.obtid,v_stationInfo[i].obtid,10);//站点代码
+        strncpy(stSurfdataInfo.ddatetime,strddatetime,14);  // 数据时间：格式yyyymmddhh24miss长度为14
+        stSurfdataInfo.t=rand()%351;       // 气温：单位，0.1摄氏度
+        stSurfdataInfo.p=rand()%265+10000; // 气压：0.1百帕
+        stSurfdataInfo.u=rand()%100+1;     // 相对湿度，0-100之间的值。
+        stSurfdataInfo.wd=rand()%360;      // 风向，0-360之间的值。
+        stSurfdataInfo.wf=rand()%150;      // 风速：单位0.1m/s
+        stSurfdataInfo.r=rand()%16;        // 降雨量：0.1mm
+        stSurfdataInfo.vis=rand()%5001+100000;  // 能见度：0.1米
 
-        v_surfdataInfo.push_back(*stSurfdataInfo);
+        v_surfdataInfo.push_back(stSurfdataInfo);
     }
     delete [] strddatetime;
 }
