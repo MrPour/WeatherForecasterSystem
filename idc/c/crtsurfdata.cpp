@@ -167,6 +167,9 @@ bool FileSurfData(const char *outPath,const char *dataFormat)
     }
     // 如果是csv格式写入第一行标题
     if(strcmp(dataFormat,"csv") == 0)  File.Fprintf("站点代码,数据时间,气温,气压,相对湿度,风向,风速,降雨量,能见度\n");
+    if(strcmp(dataFormat,"xml") == 0)  File.Fprintf("<data>\n");
+    if(strcmp(dataFormat,"json") == 0)  File.Fprintf("{\"data\":[\n");
+
     // 遍历v_surfdataInfo
     for (int i=0;i < total;i++)
     {
@@ -175,7 +178,31 @@ bool FileSurfData(const char *outPath,const char *dataFormat)
             File.Fprintf("%s,%s,%.1f,%.1f,%d,%d,%.1f,%.1f,%.1f\n",\
          v_surfdataInfo[i].obtid,v_surfdataInfo[i].ddatetime,v_surfdataInfo[i].t/10.0,v_surfdataInfo[i].p/10.0,\
          v_surfdataInfo[i].u,v_surfdataInfo[i].wd,v_surfdataInfo[i].wf/10.0,v_surfdataInfo[i].r/10.0,v_surfdataInfo[i].vis/10.0);
+
+        // 写入一条记录。注意每行都有结束标记符
+        if (strcmp(dataFormat,"xml")==0)
+            File.Fprintf("<obtid>%s</obtid><ddatetime>%s</ddatetime><t>%.1f</t><p>%.1f</p>"\
+            "<u>%d</u><wd>%d</wd><wf>%.1f</wf><r>%.1f</r><vis>%.1f</vis><endl/>\n",
+         v_surfdataInfo[i].obtid,v_surfdataInfo[i].ddatetime,v_surfdataInfo[i].t/10.0,v_surfdataInfo[i].p/10.0,
+         v_surfdataInfo[i].u,v_surfdataInfo[i].wd,v_surfdataInfo[i].wf/10.0,v_surfdataInfo[i].r/10.0,v_surfdataInfo[i].vis/10.0);
+
+        // 写入一条记录。注意字符串内部的双引号都需要转义
+        if (strcmp(dataFormat,"json")==0)
+            File.Fprintf("{\"obtid\":\"%s\",\"ddatetime\":\"%s\",\"t\":\"%.1f\",\"p\":\"%.1f\","\
+            "\"u\":\"%d\",\"wd\":\"%d\",\"wf\":\"%.1f\",\"r\":\"%.1f\",\"vis\":\"%.1f\"}",
+         v_surfdataInfo[i].obtid,v_surfdataInfo[i].ddatetime,v_surfdataInfo[i].t/10.0,v_surfdataInfo[i].p/10.0,
+         v_surfdataInfo[i].u,v_surfdataInfo[i].wd,v_surfdataInfo[i].wf/10.0,v_surfdataInfo[i].r/10.0,v_surfdataInfo[i].vis/10.0);
+        if(i<(total-1))
+        {
+            File.Fprintf(",\n");
+        }
+        else
+        {
+            File.Fprintf("\n");
+        }
     }
+    if(strcmp(dataFormat,"xml") == 0)  File.Fprintf("</data>\n");
+    if(strcmp(dataFormat,"json") == 0)  File.Fprintf("]}\n");
     // 关闭文件并将中间文件改为目标文件名
     File.CloseAndRename();
     logFile.Write("生成数据文件%s成功，数据时间%s，记录数%d。\n",strFileName,strddatetime,total);
