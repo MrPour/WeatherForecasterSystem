@@ -31,9 +31,13 @@ void func(int signal)
 
 int main()
 {
-    //方法一：父进程处理SIGCHLD信号，就不会产生僵尸进程
+    //BACKGROUND : 子进程先于父进程结束时，会给父进程发送SIGCHLD信号
+    //SIGCHLD的默认处置是忽略，会留下僵尸，孩子死后仍然可以wait
+
+    //方法一：
+    // 父进程处理SIGCHLD信号，SIG_IGN操作系统会帮助回收而不会产生僵尸进程
 //    signal(SIGCHLD,SIG_IGN);
-    //方法二：子进程退出，触发异步非阻塞函数func
+    //方法二：子进程退出，触发异步阻塞函数func去父进程自己去wait
     signal(SIGCHLD,func);
 
     int pid = fork();
