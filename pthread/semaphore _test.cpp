@@ -1,20 +1,15 @@
 //
 // Created by ruish on 2023/7/29.
 //
+#include "public.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/ipc.h>
-#include <sys/shm.h>
-/**共享内存实验
- * ipcs -m 查看共享内存
- * ipcrm -m shmid 删除共享内存
-
- * key -- 键值 shmid -- 共享内存标识
+/** 二值信号量实验
+ *  * ipcs -s 查看信号量数组
+ *  * ipcrm sem semid 删除信号量
  */
 
+//信号量 -- 用于给共享内存加锁
+CSEM sem;
 struct st_pid
 {
     //进程编号
@@ -22,7 +17,6 @@ struct st_pid
 
     //进程名称
     char name[51];
-
 };
 
 int main(int argc,char* argv[])
@@ -32,6 +26,7 @@ int main(int argc,char* argv[])
         printf("Using ./shared_memory procname\n");
         return -1;
     }
+
     //共享内存id
     int shmid;
 
@@ -42,19 +37,35 @@ int main(int argc,char* argv[])
         return -1;
     }
 
+    //如果信号量已存在，获取信号量；否则创建信号量，并初始化
+    if(sem.init(0x5005) == false)
+    {
+        printf("sem.init(0x5005) failed \n");
+        return -1;
+    }
     //使用指针变量来指向共享内存
     st_pid* stpid = nullptr;
-    //连接共享内存，传入shmid、0和0，返回值为指针void*
+    //连接共享内存到当前进程的地址空间，传入shmid、0和0，返回值为指针void*
     if((stpid = (st_pid*)shmat(shmid,0,0)) == (void*)-1)
     {
         printf("shmat failed \n");
         return -1;
     }
 
+    printf("加锁前：time=%d,val=%d\n",time(0),sem.value());
+    sem.P(); //给共享变量加锁
+    printf("加锁后：time=%d,val=%d\n",time(0),sem.value());
+
     printf("pid=%d,name=%s\n",stpid->pid,stpid->name);
     stpid->pid = getpid();
+
+    sleep(10);//假设使用了10s
+    printf("解锁前：time=%d,val=%d\n",time(0),sem.value());
     strcpy(stpid->name,argv[1]);
     printf("pid=%d,name=%s\n",stpid->pid,stpid->name);
+    sem.V(); //给共享变量解锁,val+1 同时 唤醒等待中的进程 val-1  第一个进程的V和第二个进程的P，整个过程是原子操作
+    printf("解锁后：time=%d,val=%d\n",time(0),sem.value());
+
 
     //分离共享内存
     shmdt(stpid);
