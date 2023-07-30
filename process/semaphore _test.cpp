@@ -1,11 +1,12 @@
 //
-// Created by ruish on 2023/7/29.
+// Created by chenhao on 2023/7/29.
 //
 #include "public.h"
 
 /** 二值信号量实验
  *  * ipcs -s 查看信号量数组
  *  * ipcrm sem semid 删除信号量
+ *  * 编译方式：g++ -g -o semaphore semaphore _test.cpp -I/project/public /project/public/public.cpp
  */
 
 //信号量 -- 用于给共享内存加锁

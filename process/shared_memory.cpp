@@ -9,7 +9,7 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 /**共享内存实验
- * ipcs -m 查看共享内存
+ * ipcs -m 查看共享内存 nattch是指当前有多少个进程连接到该共享存储区
  * ipcrm -m shmid 删除共享内存
 
  * key -- 键值 shmid -- 共享内存标识

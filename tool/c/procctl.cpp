@@ -8,7 +8,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-/** 使用多进程的方式，每隔10s执行一次指令。并且不留下僵尸进程
+/** 调度程序 -- 使用多进程的方式，每隔10s执行一次指令。并且不留下僵尸进程
  * ./procctl 5 /usr/bin/ls "/usr/bin/ls" "-lt" "/tmp"
  * 每隔60s自动执行模拟数据生成工作
  * /project/tool/bin/procctl 60 /project/idc/bin/crtsurfdata /project/idc/ini/stcode.ini /tmp/idc/surfdata /log/idc/crtsurfdata.log xml,csv,json
